@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using NewRelic.Platform.Sdk;
+using NewRelic.Platform.Sdk.Utils;
 
 namespace Org.BeyondComputing.NewRelic.Template
 {
@@ -9,6 +10,8 @@ namespace Org.BeyondComputing.NewRelic.Template
     {
         // Name of Agent
         private string name;
+        // Provides logging for Plugin
+        private Logger log = Logger.GetLogger(typeof(PluginAgent).Name);
 
         /// <summary>
         /// Constructor for Agent Class
@@ -60,12 +63,15 @@ namespace Org.BeyondComputing.NewRelic.Template
         /// </summary>
         public override void PollCycle()
         {
-            Console.WriteLine($"Poll Cycle not implemented for {this.name}");
-            Console.WriteLine($"Sending Default Plugin Metrics for {this.name}");
+            // Log not implemented Errors / Warnings
+            log.Error($"Poll Cycle not implemented for {this.name}");
+            log.Warn($"Sending Default Plugin Metrics for {this.name}");
 
-            // Uptime Metrics for Plugin
+            // Get Uptime Metrics for Plugin
             TimeSpan Uptime = DateTime.Now - System.Diagnostics.Process.GetCurrentProcess().StartTime;
-            Console.WriteLine($"Plugin Uptime in seconds: {Uptime.Seconds}");
+            
+            // Log Metrics to Log File
+            log.Info($"Plugin Uptime in seconds: {Uptime.Seconds}");
 
             // Send Metrics to New Relic
             ReportMetric("plugin/uptime", "seconds", Uptime.Seconds);        
